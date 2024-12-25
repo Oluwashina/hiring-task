@@ -2,30 +2,14 @@ import React from "react";
 import google_icon from '../../assets/google.png'
 import facebook_icon from '../../assets/Facebook.png'
 import { Link } from "react-router-dom";
+import Header from "../../components/Header";
 
 const RegisterPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
 
           {/* Header Section */}
-      <header className="w-full bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 flex justify-between items-center py-3">
-          {/* Logo */}
-          <div className="text-purple-600 font-bold text-lg flex items-center">
-            <span className="text-2xl mr-2">⚡</span> TaskPlanner
-          </div>
-
-          {/* Right Buttons */}
-          <div className="flex space-x-4">
-            <button className="text-gray-600 px-4 py-2 text-sm bg-gray-200 rounded-md hover:text-gray-800 font-medium">
-              Explore Features
-            </button>
-            <button className="bg-black text-sm text-white px-4 py-2 rounded-md hover:bg-gray-800">
-              Get Started
-            </button>
-          </div>
-        </div>
-      </header>
+          <Header />
 
 
    {/* Main Content */}
@@ -38,7 +22,7 @@ const RegisterPage = () => {
           alt="Profile"
           src="https://via.placeholder.com/64" // image URL
         />
-        <h1 className="text-xl font-bold mb-2">Sign up to TaskPlanner</h1>
+        <h1 className="text-xl font-bold mb-1">Sign up to TaskPlanner</h1>
         <p className="text-gray-500 text-sm">
           Already have an account?{" "}
           <Link
