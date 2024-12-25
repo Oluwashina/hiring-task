@@ -108,7 +108,6 @@ Ensure you have the following installed:
 ## Scripts
 
 ### Backend
-- `npm start` - Starts the backend server.
 - `npm run dev` - Starts the server in development mode (if applicable).
 
 ### Frontend
