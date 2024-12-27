@@ -70,7 +70,7 @@ const HomePage = () => {
 
             {/* Tasks/ Annoucements section */}
             <div className='mt-5 grid grid-cols-2 gap-4'>
-                <div className='border border-gray-200 rounded-lg shadow-sm py-5 px-5'>
+                <div className='border border-gray-200 rounded-lg shadow-sm py-5 px-5 h-fit'>
                     <div className='flex justify-between items-center'>
                         <div>
                             <h6 className='text-sm font-semibold text-[#000000]'>Tasks Priorities</h6>
@@ -85,8 +85,68 @@ const HomePage = () => {
                         </button>
                         </div>
                     </div>
+
+                    <div className='mt-5 flex gap-2 items-center'>
+                        <button className="disabled:bg-opacity-[0.6] bg-[#ededed] text-sm text-[#5b5e61] py-3 px-4 rounded-lg hover:bg-opacity-[0.9]">
+                                4 Upcoming
+                        </button>
+                        <button className="disabled:bg-opacity-[0.6] text-sm border border-gray-200 text-[#6b6d70] py-3 px-4 rounded-lg hover:bg-opacity-[0.9]">
+                                2 Overdue
+                        </button>
+                        <button className="disabled:bg-opacity-[0.6] border border-gray-200 text-[#6b6d70] text-sm py-3 px-4 rounded-lg hover:bg-opacity-[0.9]">
+                                0 Completed
+                        </button>
+
+                    </div>
+
+                    {/* Tasks section */}
+                    <div className='flex justify-between items-center mt-5'>
+                        <div>
+                            <h6 className='text-sm font-semibold text-[#000000]'>Completed UX for new landing page</h6>
+                            <div className='flex gap-2 items-center'>
+                                <div>
+                                    <p className='text-sm text-[#6b6d70]'>30 Aug 2022 - 11:30AM</p>
+                                </div>
+                                <div>
+                                    <p className='text-sm text-[#6b6d70]'>UX</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div></div>
+                    </div>
+
+                    <div className='flex justify-between items-center mt-5'>
+                        <div>
+                            <h6 className='text-sm font-semibold text-[#000000]'>Hire Web3 Developer to finish web3 related function</h6>
+                            <div className='flex gap-2 items-center'>
+                                <div>
+                                    <p className='text-sm text-[#6b6d70]'>30 Aug 2022 - 11:30AM</p>
+                                </div>
+                                <div>
+                                    <p className='text-sm text-[#6b6d70]'>No Tag</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div></div>
+                    </div>
+
+                    <div className='flex justify-between items-center mt-5'>
+                        <div>
+                            <h6 className='text-sm font-semibold text-[#000000]'>Zoom call with developers team, finalize feature fo...</h6>
+                            <div className='flex gap-2 items-center'>
+                                <div>
+                                    <p className='text-sm text-[#6b6d70]'>30 Aug 2022 - 11:30AM</p>
+                                </div>
+                                <div>
+                                    <p className='text-sm text-[#6b6d70]'>Developers</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div></div>
+                    </div>
+
                 </div>
-                <div className='border border-gray-200 rounded-lg shadow-sm py-5 px-5'>
+                <div className='border border-gray-200 rounded-lg shadow-sm py-5 px-5 h-fit'>
 
                     <div className='flex justify-between items-center'>
                         <div>
