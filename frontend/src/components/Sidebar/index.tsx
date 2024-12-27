@@ -176,7 +176,7 @@ const Sidebar = ({ title,children }: sidebarType) => {
                         
                     </div>
                 </div>
-                 <div className="mb-8">{children}</div>
+                 <div className="mb-8 px-4 md:px-6">{children}</div>
             </div>
         </div>
         </>
