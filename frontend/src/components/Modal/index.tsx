@@ -1,11 +1,10 @@
-import React from "react";
+import React,{useRef} from "react";
 import close_icon from "../../assets/close_icon.svg";
 import { CSSTransition } from "react-transition-group";
 import "./modal.css";
 
 type LayoutProps = {
   title: string;
-  subtitle: string;
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
@@ -16,18 +15,21 @@ const ModalComponent = ({
   onClose,
   isOpen,
   title,
-  subtitle,
   children,
   titleBorder,
 }: LayoutProps) => {
+       // Create a ref for the modal
+  const nodeRef = useRef(null);
   return (
     <>
       <CSSTransition
         in={isOpen}
         unmountOnExit
         timeout={{ enter: 0, exit: 300 }}
+        nodeRef={nodeRef} // Pass the ref here
       >
         <div
+           ref={nodeRef} 
           className="modal 
             overflow-y-auto remove-scroll overflow-x-hidden bg-[#262626]
             bg-opacity-85 fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-full
@@ -39,9 +41,9 @@ const ModalComponent = ({
             className="relative p-8 w-full max-w-xl h-full md:h-auto mx-auto my-10 modal-content translate-y-[-200px] transition-all duration-[0.3s]"
           >
             {/* modal content */}
-            <div className="relative bg-white rounded-[16px] overflow-hidden">
+            <div className="relative bg-white rounded-lg overflow-hidden">
               {/* modal header */}
-              <div className={`flex justify-between items-center px-6 py-5 ${titleBorder ? 'border-b border-[#E5E5E5] bg-[#F7F7F7]' : ''}`}>
+              <div className={`flex justify-between items-center px-5 py-4 ${titleBorder ? 'border-b border-[#E5E5E5]' : ''}`}>
                 <div>
                   <h3 className="text-base font-medium text-[#121212]">
                     {title}
@@ -54,7 +56,7 @@ const ModalComponent = ({
               </div>
 
               {/* modal body */}
-              <div>{children}</div>
+              <div className="px-5">{children}</div>
             </div>
           </div>
         </div>

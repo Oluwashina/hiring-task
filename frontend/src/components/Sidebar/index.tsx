@@ -1,7 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import home_icon from '../../assets/home.svg'
 import notification_icon from '../../assets/notification.svg'
-import add_icon from '../../assets/add.svg'
+import { Add, Home,InsertChartOutlined, PeopleOutline, ContentPaste, ChatBubbleOutline, EventNoteOutlined, DashboardOutlined } from "@mui/icons-material";
 import SearchComponent from '../Search';
 import { useCallback, useState } from 'react';
 
@@ -46,7 +45,9 @@ const Sidebar = ({ title,children }: sidebarType) => {
                                     : "flex gap-3 py-3 px-5 items-center"
                                 }
                             >
-                                <img src={home_icon} alt="home icon" className='w-[16px] h-[16px]' />
+                                <Home
+                                style={{ color: "#000000", fontSize: "18px", cursor: "pointer" }}
+                                />
                                 <p className={`text-sm ${location.pathname === "/home" ? "text-[#000000]":"text-[#5b5e61]" } font-medium capitalize`}>
                                     Home
                                     </p>
@@ -61,7 +62,9 @@ const Sidebar = ({ title,children }: sidebarType) => {
                                     : "flex gap-3 py-3 px-5 items-center"
                                 }
                             >
-                                <img src={home_icon} alt="dashboard icon" className='w-[16px] h-[16px]' />
+                                 <InsertChartOutlined
+                                style={{ color: "#000000", fontSize: "18px", cursor: "pointer" }}
+                                />
                                 <p className={`text-sm ${location.pathname === "/dashboard" ? "text-[#000000]":"text-[#5b5e61]" } font-medium capitalize`}>
                                     Dashboard
                                     </p>
@@ -75,7 +78,9 @@ const Sidebar = ({ title,children }: sidebarType) => {
                                     : "flex gap-3 py-3 px-5 items-center"
                                 }
                             >
-                                <img src={home_icon} alt="teams icon" className='w-[16px] h-[16px]' />
+                                   <PeopleOutline
+                                style={{ color: "#000000", fontSize: "20px", cursor: "pointer" }}
+                                />
                                 <p className={`text-sm ${location.pathname === "/teams" ? "text-[#000000]":"text-[#5b5e61]" } font-medium capitalize`}>
                                     Teams
                                     </p>
@@ -89,7 +94,9 @@ const Sidebar = ({ title,children }: sidebarType) => {
                                     : "flex gap-3 py-3 px-5 items-center"
                                 }
                             >
-                                <img src={home_icon} alt="boards icon" className='w-[16px] h-[16px]' />
+                                   <ContentPaste
+                                style={{ color: "#000000", fontSize: "20px", cursor: "pointer" }}
+                                />
                                 <p className={`text-sm ${location.pathname === "/boards" ? "text-[#000000]":"text-[#5b5e61]" } font-medium capitalize`}>
                                     Boards
                                     </p>
@@ -103,7 +110,9 @@ const Sidebar = ({ title,children }: sidebarType) => {
                                     : "flex gap-3 py-3 px-5 items-center"
                                 }
                             >
-                                <img src={home_icon} alt="inbox icon" className='w-[16px] h-[16px]' />
+                                   <ChatBubbleOutline
+                                style={{ color: "#000000", fontSize: "20px", cursor: "pointer" }}
+                                />
                                 <p className={`text-sm ${location.pathname === "/dashboard" ? "text-[#000000]":"text-[#5b5e61]" } font-medium capitalize`}>
                                     Inbox
                                     </p>
@@ -117,7 +126,9 @@ const Sidebar = ({ title,children }: sidebarType) => {
                                     : "flex gap-3 py-3 px-5 items-center"
                                 }
                             >
-                                <img src={home_icon} alt="timeline icon" className='w-[16px] h-[16px]' />
+                                  <EventNoteOutlined
+                                style={{ color: "#000000", fontSize: "20px", cursor: "pointer" }}
+                                />
                                 <p className={`text-sm ${location.pathname === "/timeline" ? "text-[#000000]":"text-[#5b5e61]" } font-medium capitalize`}>
                                     Timeline
                                     </p>
@@ -131,7 +142,9 @@ const Sidebar = ({ title,children }: sidebarType) => {
                                     : "flex gap-3 py-3 px-5 items-center"
                                 }
                             >
-                                <img src={home_icon} alt="more icon" className='w-[16px] h-[16px]' />
+                                <DashboardOutlined
+                                style={{ color: "#000000", fontSize: "20px", cursor: "pointer" }}
+                                />
                                 <p className={`text-sm ${location.pathname === "/more" ? "text-[#000000]":"text-[#5b5e61]" } font-medium capitalize`}>
                                     More Options
                                     </p>
@@ -165,7 +178,9 @@ const Sidebar = ({ title,children }: sidebarType) => {
                     </div>
                     <div className="flex gap-5 items-center">
                         <div className="cursor-pointer flex justify-center items-center text-2xl bg-[#F5F5F5] w-[40px] h-[40px] rounded-full">
-                        <img src={add_icon} alt="add icon"  />
+                            <Add
+                                style={{ color: "#5b5e61", fontSize: "20px", cursor: "pointer" }}
+                                />
                         </div>
                         <div className="cursor-pointer flex justify-center items-center bg-[#F5F5F5] w-[40px] h-[40px] rounded-full">
                             <img src={notification_icon} alt="bell" />

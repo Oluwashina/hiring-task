@@ -18,3 +18,9 @@ export const registerValidator = Yup.object({
       "Accept Terms & Conditions is required"
     ),
   })
+
+  export const createTaskValidator = Yup.object({
+    title: Yup.string().required("Title is required"),
+    description: Yup.string().required("Description is required"),
+    duedate: Yup.string().required("Due date is required")
+  })
