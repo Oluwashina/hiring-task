@@ -1,29 +1,62 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import { MoreHoriz, Add,SellOutlined, Event, EditOutlined, DeleteOutline,EventNoteOutlined,ContentPaste, ChevronRight } from "@mui/icons-material";
 import warning_icon from '../../assets/warning.svg'
 import ModalComponent from '../../components/Modal';
-import { Formik, Form, FormikHelpers } from "formik";
+import { Formik, Form, FormikHelpers,  } from "formik";
 import { createTaskValidator } from "../../validationSchema/validator";
 import TextInput from '../../components/TextInput';
+import { useTodos } from '../../context/TodoContext';
+import moment from "moment";
+
 
 const HomePage = () => {
 
     const [openTask, setTaskOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
 
-    const [showMenu, setShowMenu] = useState(false);
-    const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
-    // const [currentTask, setCurrentTask] = useState(null);
+    interface Todo {
+        id: string;
+        title: string;
+        description: string;
+        completed: boolean;
+      }
 
-    const toggleMenu = () => {
-      setShowMenu(!showMenu);
+    const [showMenuId, setShowMenuId] = useState<string | null>(null); 
+    const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+    const [currentTask, setCurrentTask] = useState<Todo>({
+        id: '',
+        title: '',
+        description: '',
+        completed: false,
+    });
+    const { user,fetchUserTodos, todos, loading } = useTodos();
+
+
+     const toggleMenu = (taskId: string) => {
+        if (showMenuId === taskId) {
+            setShowMenuId(null); // Close menu if it's already open
+        } else {
+            setShowMenuId(taskId); // Open the menu for the selected task
+        }
     };
 
-    const openTaskModal = (mode: 'add' | 'edit', task = null) => {
+    const openTaskModal = (mode: 'add' | 'edit', task: Todo | null = null) => {
         setModalMode(mode);
         setTaskOpen(true);
-        // setCurrentTask(task);
+        setShowMenuId(null); 
+        if (mode === "edit" && task) {
+            setCurrentTask(task);
+        } else {
+            setCurrentTask({
+                id: '',
+                title: '',
+                description: '',
+                completed: false,
+            }); // Clears current task for add mode
+        }
     };
+
+
 
     const [activeTab, setActiveTab] = useState("upcoming"); // Default active tab
 
@@ -39,11 +72,32 @@ const HomePage = () => {
         duedate: string;
     }
 
+    const handleCheckboxChange = (id: string, status: boolean, todo: Todo) => {
+        // Toggle the completed status of the task with the given id
+       console.log(id)
+       console.log(status)
+       // Update the task in the database with the new completed status
+            
+    };
+
     const handleSubmit = (values: Values) => {
         // e.preventDefault()
        console.log(values)
-       
     };
+
+    const handleDeleteModal = (id:string) =>{
+        setDeleteOpen(!deleteOpen)
+        setShowMenuId(null); 
+        console.log(id)
+    }
+
+
+    useEffect(()=>{
+        if(user){
+          fetchUserTodos();
+        }
+     
+    },[user, fetchUserTodos])
 
 
     return ( 
@@ -60,10 +114,11 @@ const HomePage = () => {
       >
         <div className='py-5'>
         <Formik
+                enableReinitialize={true} 
                 initialValues={{
-                    title: "",
-                    description: "",
-                    duedate: ""
+                    title: modalMode === 'edit' && currentTask ? currentTask.title : '',
+                    description: modalMode === 'edit' && currentTask ? currentTask.description : '',
+                    duedate: '',
                 }}
                 validationSchema={createTaskValidator}
                 onSubmit={(
@@ -317,157 +372,111 @@ const HomePage = () => {
                     </div>
 
                     {/* Tasks section */}
-                    <div className='flex justify-between mt-5'>
-                        <div className='flex gap-3'>
-                            <div>
-                            <input id="completed" name="completed" type="checkbox"
-                                  className=" text-[#7C44BD] bg-transparent border-[#7C44BD] rounded focus:ring-[#7C44BD] focus:ring-0"
-                               />
-                            </div>
-                            <div>
-                            <h6 className='text-sm font-semibold text-[#000000]'>Completed UX for new landing page</h6>
-                            <div className='flex gap-4 items-center mt-1'>
-                                <div className='flex gap-1 items-center'>
-                                <Event
-                                        style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
-                                    />
-                                    <p className='text-sm text-[#6b6d70]'>30 Aug 2022 - 11:30AM</p>
-                                </div>
-                                <div className='flex gap-1 items-center'>
-                                     <SellOutlined
-                                        style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
-                                    />
-                                    <p className='text-sm text-[#6b6d70]'>UX</p>
-                                </div>
-                            </div>
-                            </div>   
-                        </div>
-                        <div className='relative'>
-                           <MoreHoriz
-                                   onClick={toggleMenu}
-                                style={{ color: "#5b5e61", fontSize: "20px", cursor: "pointer" }}
-                              />
-                               {/* Dropdown Menu */}
-                                {showMenu && (
-                                <div className="absolute right-0 bg-white border border-gray-200 shadow-md rounded-md py-2 w-40 z-10">
-                                    <button
-                                    className="flex gap-2 items-center px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
-                                    onClick={() => openTaskModal('edit')}
-                                    >
-                                          <EditOutlined
-                                            style={{ color: "#5b5e61", fontSize: "20px", }}
-                                            />
-                                    Edit Task
-                                    </button>
-                                    <button
-                                    className="flex gap-2 items-center px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
-                                    onClick={() => setDeleteOpen(true)}
-                                    >
-                                         <DeleteOutline
-                                            style={{ color: "#5b5e61", fontSize: "20px", }}
-                                            />
-                                    Delete Task
-                                    </button>
-                                </div>
-                                )}
-                        </div>
-                    </div>
+                    {
+                        loading ?
+                        (
+                        <div className="animate-pulse w-full mt-4  bg-[#FEFEFE]">
+                            <div className="h-8 bg-gray-200 rounded-lg  w-full mb-2"></div>
+                            <div className="h-8 bg-gray-200 rounded-lg  w-full mb-2"></div>
+                            <div className="h-8 bg-gray-200 rounded-lg  w-full mb-2"></div>
+                            <div className="h-8 bg-gray-200 rounded-lg  w-full mb-2"></div>
+                            <div className="h-8 bg-gray-200 rounded-lg  w-full"></div>
+                         </div>
+                        )
+                        :
+                        (
+                            <>
+                            {
+                                todos.length === 0 ?
+                                <div className='flex flex-col justify-center items-center min-h-[400px]'>
+                                    <div className='bg-[#F7F7F7] w-[120px] h-[120px] rounded-full'>
+        
+                                    </div>
+                                    <div className='mt-5'>
+                                        <h6 className='text-[#000000] text-lg font-medium'>No tasks has founded</h6>
+                                    </div>
+                                    <div className='mt-1 max-w-[250px] mx-auto'>
+                                        <p className='text-sm text-[#3A3A3A] text-center'>Click here to add <span onClick={() => openTaskModal('add')} className='text-[#6f46eb] cursor-pointer'>New task</span></p>
+                                    </div>
+                               </div>
+                                :
+                                (
+                                 <>
+                                 {todos.map((todo) => (
+                                    <div key={todo.id} className='flex justify-between mt-5'>
+                                        <div className='flex gap-3'>
+                                            <div>
+                                            <input 
+                                                id={`completed-${todo.id}`} 
+                                                name="completed"
+                                                type="checkbox"
+                                                checked={todo.completed}
+                                                onChange={(e) =>
+                                                    handleCheckboxChange(todo.id, e.target.checked, todo)
+                                                }
+                                                className=" text-[#7C44BD] bg-transparent cursor-pointer border-[#7C44BD] rounded focus:ring-[#7C44BD] focus:ring-0"
+                                                />
+                                            </div>
+                                            <div>
+                                            <h6 className='text-sm font-semibold text-[#000000]'>{todo.title}</h6>
+                                            <div className='flex gap-4 items-center mt-1'>
+                                                <div className='flex gap-1 items-center'>
+                                                <Event
+                                                        style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
+                                                    />
+                                                    <p className='text-sm text-[#6b6d70]'> {moment().format("DD MMM, YYYY")} - {moment().format('h:mmA')}</p>
+                                                </div>
+                                                <div className='flex gap-1 items-center'>
+                                                        <SellOutlined
+                                                        style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
+                                                    />
+                                                    <p className='text-sm text-[#6b6d70]'>UX</p>
+                                                </div>
+                                            </div>
+                                            </div>   
+                                        </div>
+                                            <div className='relative'>
+                                                <MoreHoriz
+                                                     onClick={() => toggleMenu(todo.id)}
+                                                    style={{ color: "#5b5e61", fontSize: "20px", cursor: "pointer" }}
+                                                    />
+                                                    {/* Dropdown Menu */}
+                                                    {showMenuId === todo.id && (
+                                                    <div className="absolute right-0 bg-white border border-gray-200 shadow-md rounded-md py-2 w-40 z-10">
+                                                        <button
+                                                        className="flex gap-2 items-center px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
+                                                        onClick={() => openTaskModal('edit', todo)}
+                                                        >
+                                                                <EditOutlined
+                                                                style={{ color: "#5b5e61", fontSize: "20px", }}
+                                                                />
+                                                        Edit Task
+                                                        </button>
+                                                        <button
+                                                        className="flex gap-2 items-center px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
+                                                        onClick={() => handleDeleteModal(todo.id)}
+                                                        >
+                                                                <DeleteOutline
+                                                                style={{ color: "#5b5e61", fontSize: "20px", }}
+                                                                />
+                                                        Delete Task
+                                                        </button>
+                                                    </div>
+                                                    )}
+                                            </div>
+                                    </div>
+                                    ))}
+                                 </>
+                                )
+                             }
+                             </>
+                            )
+                        }
 
-                    <div className='flex justify-between mt-5'>
-                        <div className='flex gap-3'>
-                            <div>
-                            <input id="completed" name="completed" type="checkbox"
-                                  className=" text-[#7C44BD] bg-transparent border-[#7C44BD] rounded focus:ring-[#7C44BD] focus:ring-0"
-                               />
-                            </div>
-                            <div>
-                            <h6 className='text-sm font-semibold text-[#000000]'>Hire Web3 Developer to finish web3 related function</h6>
-                            <div className='flex gap-4 items-center mt-1'>
-                                <div className='flex gap-1 items-center'>
-                                <Event
-                                        style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
-                                    />
-                                    <p className='text-sm text-[#6b6d70]'>30 Aug 2022 - 11:30AM</p>
-                                </div>
-                                <div className='flex gap-1 items-center'>
-                                     <SellOutlined
-                                        style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
-                                    />
-                                    <p className='text-sm text-[#6b6d70]'>No Tag</p>
-                                </div>
-                            </div>
-                            </div>   
-                        </div>
-                        <div className=''>
-                           <MoreHoriz
-                                style={{ color: "#5b5e61", fontSize: "20px", cursor: "pointer" }}
-                              />
-                        </div>
-                    </div>
+                            
+                 
 
-                    <div className='flex justify-between mt-5'>
-                        <div className='flex gap-3'>
-                            <div>
-                            <input id="completed" name="completed" type="checkbox"
-                                  className=" text-[#7C44BD] bg-transparent border-[#7C44BD] rounded focus:ring-[#7C44BD] focus:ring-0"
-                               />
-                            </div>
-                            <div>
-                            <h6 className='text-sm font-semibold text-[#000000]'>Zoom call with developers team, finalize feature fo...</h6>
-                            <div className='flex gap-4 items-center mt-1'>
-                                <div className='flex gap-1 items-center'>
-                                <Event
-                                        style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
-                                    />
-                                    <p className='text-sm text-[#6b6d70]'>30 Aug 2022 - 11:30AM</p>
-                                </div>
-                                <div className='flex gap-1 items-center'>
-                                     <SellOutlined
-                                        style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
-                                    />
-                                    <p className='text-sm text-[#6b6d70]'>Developers</p>
-                                </div>
-                            </div>
-                            </div>   
-                        </div>
-                        <div className=''>
-                           <MoreHoriz
-                                style={{ color: "#5b5e61", fontSize: "20px", cursor: "pointer" }}
-                              />
-                        </div>
-                    </div>
-
-                    <div className='flex justify-between mt-5'>
-                        <div className='flex gap-3'>
-                            <div>
-                            <input id="completed" name="completed" type="checkbox"
-                                  className=" text-[#7C44BD] bg-transparent border-[#7C44BD] rounded focus:ring-[#7C44BD] focus:ring-0"
-                               />
-                            </div>
-                            <div>
-                            <h6 className='text-sm font-semibold text-[#000000]'>Finalize the mobile app screen with designers</h6>
-                            <div className='flex gap-4 items-center mt-1'>
-                                <div className='flex gap-1 items-center'>
-                                <Event
-                                        style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
-                                    />
-                                    <p className='text-sm text-[#6b6d70]'>30 Aug 2022 - 11:30AM</p>
-                                </div>
-                                <div className='flex gap-1 items-center'>
-                                     <SellOutlined
-                                        style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
-                                    />
-                                    <p className='text-sm text-[#6b6d70]'>Design Tag</p>
-                                </div>
-                            </div>
-                            </div>   
-                        </div>
-                        <div className=''>
-                           <MoreHoriz
-                                style={{ color: "#5b5e61", fontSize: "20px", cursor: "pointer" }}
-                              />
-                        </div>
-                    </div>
+                  
 
 
                 </div>

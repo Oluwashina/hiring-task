@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { signIn, fetchTodos, addTodo, updateTodo, deleteTodo } from '../services/api';
+import { signIn, fetchTodos, addTodo, updateTodo, deleteTodo, signUp } from '../services/api';
 
 // Types Definition for state
 interface Todo {
@@ -7,6 +7,7 @@ interface Todo {
   title: string;
   description: string;
   completed: boolean;
+  dueDate: string;
 }
 
 interface User {
@@ -20,8 +21,9 @@ interface TodoContextType {
   loading: boolean;
   error: string | null;
   signInUser: (email: string, password: string) => void;
+  signUpUser: (username: string, email: string, password: string) => void;
   signOutUser: () => void;
-  fetchUserTodos: (userId: string) => void;
+  fetchUserTodos: () => void;
   addNewTodo: (todo: { title: string; description: string }) => void;
   updateTodoItem: (todoId: string, updatedTodo: { title: string; description: string }) => void;
   removeTodoItem: (todoId: string) => void;
@@ -57,6 +59,18 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const signUpUser = async (username: string, email: string, password: string) => {
+    setLoading(true);
+    try {
+      const userData = await signUp(username,email, password);
+      setUser(userData);
+      setLoading(false);
+    } catch (error) {
+      setError('Failed to sign up');
+      setLoading(false);
+    }
+  };
+
   const signOutUser = () => {
     localStorage.removeItem('auth_token'); // Remove token from localStorage on sign-out
     setUser(null);
@@ -75,17 +89,18 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const userTodos = await fetchTodos();
       setTodos(userTodos);
       setLoading(false);
+      console.log(userTodos);
     } catch (error) {
       setError('Failed to fetch todos');
       setLoading(false);
     }
   };
 
-  const addNewTodo = async (todo: { title: string; description: string }) => {
+const addNewTodo = async (todo: { title: string; description: string }) => {
     if (user) {
       setLoading(true);
       try {
-        const newTodo = await addTodo(user.id, todo);
+        const newTodo = await addTodo(todo);
         setTodos([...todos, newTodo]);
         setLoading(false);
       } catch (error) {
@@ -95,11 +110,11 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const updateTodoItem = async (todoId: string, updatedTodo: { title: string; description: string }) => {
+const updateTodoItem = async (todoId: string, updatedTodo: { title: string; description: string }) => {
     if (user) {
       setLoading(true);
       try {
-        const updated = await updateTodo(user.id, todoId, updatedTodo);
+        const updated = await updateTodo(todoId, updatedTodo);
         setTodos(todos.map(todo => (todo.id === todoId ? updated : todo)));
         setLoading(false);
       } catch (error) {
@@ -109,11 +124,13 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+
+
   const removeTodoItem = async (todoId: string) => {
     if (user) {
       setLoading(true);
       try {
-        await deleteTodo(user.id, todoId);
+        await deleteTodo(todoId);
         setTodos(todos.filter(todo => todo.id !== todoId));
         setLoading(false);
       } catch (error) {
@@ -131,6 +148,7 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         loading,
         error,
         signInUser,
+        signUpUser,
         signOutUser,
         fetchUserTodos,
         addNewTodo,

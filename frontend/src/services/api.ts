@@ -7,11 +7,17 @@ const API = axios.create({
 
 // API call for sign-in
 export const signIn = async (email: string, password: string) => {
-    const response = await API.post('/auth/signin', { email, password });
+    const response = await API.post('/auth/login', { email, password });
     const token = response.data.token; // assuming the token is returned in the 'token' field
     if (token) {
       localStorage.setItem('auth_token', token); // Store token in localStorage
     }
+    return response.data;
+  };
+
+  // API call for signup
+export const signUp = async (username: string, email: string, password: string) => {
+    const response = await API.post('/auth/register', { username,email, password });
     return response.data;
   };
 
@@ -30,17 +36,19 @@ export const fetchTodos = async () => {
     return response.data;
   };
 
-export const addTodo = async (userId: string, todo: { title: string, description: string }) => {
-  const response = await API.post(`/todos/${userId}`, todo);
+export const addTodo = async (todo: { title: string, description: string }) => {
+  const response = await API.post(`/todo`, todo);
   return response.data;
 };
 
-export const updateTodo = async (userId: string, todoId: string, updatedTodo: { title: string, description: string }) => {
-  const response = await API.put(`/todos/${userId}/${todoId}`, updatedTodo);
+export const updateTodo = async (todoId: string, updatedTodo: { title: string, description: string }) => {
+  const response = await API.put(`/todo/${todoId}`, updatedTodo);
   return response.data;
 };
 
-export const deleteTodo = async (userId: string, todoId: string) => {
-  const response = await API.delete(`/todos/${userId}/${todoId}`);
+
+
+export const deleteTodo = async (todoId: string) => {
+  const response = await API.delete(`/todo/${todoId}`);
   return response.data;
 };
