@@ -13,7 +13,7 @@ const HomePage = () => {
 
     const [showMenu, setShowMenu] = useState(false);
     const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
-    const [currentTask, setCurrentTask] = useState(null);
+    // const [currentTask, setCurrentTask] = useState(null);
 
     const toggleMenu = () => {
       setShowMenu(!showMenu);
@@ -22,7 +22,7 @@ const HomePage = () => {
     const openTaskModal = (mode: 'add' | 'edit', task = null) => {
         setModalMode(mode);
         setTaskOpen(true);
-        setCurrentTask(task);
+        // setCurrentTask(task);
     };
 
     const [activeTab, setActiveTab] = useState("upcoming"); // Default active tab
