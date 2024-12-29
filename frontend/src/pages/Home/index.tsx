@@ -4,15 +4,25 @@ import warning_icon from '../../assets/warning.svg'
 import ModalComponent from '../../components/Modal';
 import { Formik, Form, FormikHelpers } from "formik";
 import { createTaskValidator } from "../../validationSchema/validator";
+import TextInput from '../../components/TextInput';
 
 const HomePage = () => {
 
     const [openTask, setTaskOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
 
     const [showMenu, setShowMenu] = useState(false);
+    const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+    const [currentTask, setCurrentTask] = useState(null);
 
     const toggleMenu = () => {
       setShowMenu(!showMenu);
+    };
+
+    const openTaskModal = (mode: 'add' | 'edit', task = null) => {
+        setModalMode(mode);
+        setTaskOpen(true);
+        setCurrentTask(task);
     };
 
     const [activeTab, setActiveTab] = useState("upcoming"); // Default active tab
@@ -39,10 +49,10 @@ const HomePage = () => {
     return ( 
         <>
 
-        {/* Add Task Modal */}
+        {/* Add/Edit Task Modal */}
         <ModalComponent
         isOpen={openTask}
-        title="Create tasks"
+        title={modalMode === 'add' ? 'Create tasks' : 'Edit Task'}
         onClose={() => {
           setTaskOpen(false);
         }}
@@ -77,69 +87,29 @@ const HomePage = () => {
             <Form className="" onSubmit={handleSubmit}>
             <div className="space-y-4">
                 {/* Task Name */}
-                <div>
-                <label htmlFor="title" className="block text-xs mb-2 font-medium text-gray-700">
-                    Task Name
-                </label>
-                <div className="relative">
-                <input
-                    type="text"
+                <TextInput
+                    label="Task Name"
                     name="title"
-                 
-                    className={
-                        touched.title && errors.title
-                        ? "appearance-none w-full placeholder:text-[#949494] placeholder:text-sm  text-[#121212] text-sm focus:border-[#F74445] focus:outline-none rounded-md border border-[#B92043] bg-[#FEECEC] py-3 px-4"
-                        : "appearance-none block text-sm w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:border-purple-600 focus:outline-none"
-                    }
                     placeholder="Enter your task title"
                     value={values.title}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                        />
-                    {touched.title && errors.title ?
-                   ( <img src={warning_icon} alt="warning" className='w-[14px] h-[14px] absolute top-1/2 transform text-[#3A3A3A] text-sm font-medium -translate-y-1/2 right-6 cursor-pointer' />): null}
-                   </div>
-                   {touched.title && errors.title ? (
-                    <div className="flex gap-1 mt-1 items-center">
-                        <img src={warning_icon} alt="warning" className='w-[14px] h-[14px]' />
-                        <small className="text-[#F74445] font-medium text-xs">
-                        {touched.title && errors.title}
-                        </small>
-                    </div>
-                    ) : null}
-                </div>
+                    error={errors.title}
+                    warningIcon={warning_icon}
+                />
                 
                 {/* Due Date */}
-                <div>
-                <label htmlFor="duedate" className="block text-xs mb-2 font-medium text-gray-700">
-                    Due Date
-                </label>
-                <div className="relative">
-                <input
-                    type="date"
+                <TextInput
+                    label=" Due Date"
                     name="duedate"
-                 
-                    className={
-                        touched.duedate && errors.duedate
-                        ? "appearance-none w-full placeholder:text-[#949494] placeholder:text-sm  text-[#121212] text-sm focus:border-[#F74445] focus:outline-none rounded-md border border-[#B92043] bg-[#FEECEC] py-3 px-4"
-                        : "appearance-none block text-sm w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:border-purple-600 focus:outline-none"
-                    }
-                    placeholder="Enter your task title"
+                    type='date'
+                    placeholder=""
                     value={values.duedate}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                        />
-         
-                   </div>
-                   {touched.duedate && errors.duedate ? (
-                    <div className="flex gap-1 mt-1 items-center">
-                        <img src={warning_icon} alt="warning" className='w-[14px] h-[14px]' />
-                        <small className="text-[#F74445] font-medium text-xs">
-                        {touched.duedate && errors.duedate}
-                        </small>
-                    </div>
-                    ) : null}
-                </div>
+                    error={errors.duedate}
+                    warningIcon={warning_icon}
+                />
 
                 {/* Description */}
                 <div>
@@ -181,13 +151,57 @@ const HomePage = () => {
                 disabled={!(isValid && dirty)}
                 className="mt-6 w-full disabled:bg-opacity-[0.6] bg-purple-600 text-sm text-white py-4 px-4 rounded-lg hover:bg-opacity-[0.9]"
             >
-                Create 
+             {modalMode === 'add' ? 'Create' : 'Save Changes'}
             </button>
           </Form>
             )}
          </Formik>
         </div>
       </ModalComponent>
+
+      {/* Delete Confirmation Modal */}
+      <ModalComponent
+        isOpen={deleteOpen}
+        title="Delete Task"
+        onClose={() => {
+          setDeleteOpen(false);
+        }}
+        titleBorder
+      >
+        <div className='py-5'>
+            {/* delete confirmation section */}
+            <div className=''>
+                <p className='text-sm  text-[#000000] font-medium'>Are you sure you want to delete this task?</p>
+            </div>
+
+            {/* delete confirmation button */}
+            <div className='flex justify-end items-center gap-2 mt-8'>
+            <button
+                type="button"
+                className=" disabled:bg-opacity-[0.6] bg-transparent text-black text-sm  py-3 px-3 "
+                onClick={() => {    
+                    setDeleteOpen(false);
+                
+                }}
+                >
+                    No
+                </button>
+                <button
+                type="button"
+                className="disabled:bg-opacity-[0.6] bg-purple-600 text-sm text-white py-3 px-3 rounded-lg hover:bg-opacity-[0.9]"
+                onClick={() => {    
+                    setDeleteOpen(false);
+                
+                }}
+                >
+                    Yes, proceed
+             </button>
+            </div>
+            
+                
+        </div>
+        </ModalComponent>
+          
 
         {/* Overview section i.e verification section/metrics */}
             <div className='border border-gray-200 rounded-lg shadow-sm py-5 px-5 mt-5'>
@@ -275,7 +289,7 @@ const HomePage = () => {
                         <div>
                         <button
                             type="submit"
-                            onClick={()=>setTaskOpen(true)}
+                            onClick={() => openTaskModal('add')}
                             className="w-full flex gap-1 items-center disabled:bg-opacity-[0.6] font-medium bg-[#ede8fc] text-sm text-[#6f46eb] py-3 px-4 rounded-lg hover:bg-opacity-[0.9]"
                         >
                              <Add
@@ -338,7 +352,7 @@ const HomePage = () => {
                                 <div className="absolute right-0 bg-white border border-gray-200 shadow-md rounded-md py-2 w-40 z-10">
                                     <button
                                     className="flex gap-2 items-center px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
-                                    onClick={() => alert("Edit Task Clicked")}
+                                    onClick={() => openTaskModal('edit')}
                                     >
                                           <EditOutlined
                                             style={{ color: "#5b5e61", fontSize: "20px", }}
@@ -347,7 +361,7 @@ const HomePage = () => {
                                     </button>
                                     <button
                                     className="flex gap-2 items-center px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
-                                    onClick={() => alert("Delete Task Clicked")}
+                                    onClick={() => setDeleteOpen(true)}
                                     >
                                          <DeleteOutline
                                             style={{ color: "#5b5e61", fontSize: "20px", }}

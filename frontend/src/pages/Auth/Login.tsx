@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import Header from "../../components/Header";
 import { Formik, Form, FormikHelpers } from "formik";
 import { loginValidator } from "../../validationSchema/validator";
+import TextInput from "../../components/TextInput";
 
 const LoginPage = () => {
    
@@ -102,70 +103,30 @@ const LoginPage = () => {
         }) => (
             <Form className="" onSubmit={handleSubmit}>
             <div className="space-y-4">
-                {/* Email */}
-                <div>
-                <label htmlFor="email" className="block text-xs mb-2 font-medium text-gray-700">
-                    Email Address
-                </label>
-                <div className="relative">
-                <input
-                    type="text"
+                {/* Email */}    
+                <TextInput
+                    label="Email Address"
                     name="email"
-                 
-                    className={
-                        touched.email && errors.email
-                        ? "appearance-none w-full placeholder:text-[#949494] placeholder:text-sm  text-[#121212] text-sm focus:border-[#F74445] focus:outline-none rounded-md border border-[#B92043] bg-[#FEECEC] py-3 px-4"
-                        : "appearance-none block text-sm w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:border-purple-600 focus:outline-none"
-                    }
                     placeholder="Enter your email address"
                     value={values.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                        />
-                    {touched.email && errors.email ?
-                   ( <img src={warning_icon} alt="warning" className='w-[14px] h-[14px] absolute top-1/2 transform text-[#3A3A3A] text-sm font-medium -translate-y-1/2 right-6 cursor-pointer' />): null}
-                   </div>
-                   {touched.email && errors.email ? (
-                    <div className="flex gap-1 mt-2 items-center">
-                        <img src={warning_icon} alt="warning" className='w-[14px] h-[14px]' />
-                        <small className="text-[#F74445] font-medium text-xs">
-                        {touched.email && errors.email}
-                        </small>
-                    </div>
-                    ) : null}
-                </div>
+                    error={errors.email}
+                    warningIcon={warning_icon}
+                />
 
                 {/* Password */}
-                <div>
-                <label htmlFor="password" className="block text-xs mb-2 font-medium text-gray-700">
-                    Password
-                </label>
-                <div className="relative">
-                    <input
-                        type="password"
-                        name="password"
-                        className={
-                            touched.password && errors.password
-                            ? "appearance-none w-full placeholder:text-[#949494] placeholder:text-sm  text-[#121212] text-sm focus:border-[#F74445] focus:outline-none rounded-md border border-[#B92043] bg-[#FEECEC] py-3 px-4"
-                            : "appearance-none block text-sm w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:border-purple-600 focus:outline-none"
-                        }
-                        placeholder="Enter your password"
-                        value={values.password}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                    />
-                       {touched.password && errors.password ?
-                   ( <img src={warning_icon} alt="warning" className='w-[14px] h-[14px] absolute top-1/2 transform text-[#3A3A3A] text-sm font-medium -translate-y-1/2 right-6 cursor-pointer' />): null}
-                </div>
-                {touched.password && errors.password ? (
-                    <div className="flex gap-1 mt-2 items-center">
-                        <img src={warning_icon} alt="warning" className='w-[14px] h-[14px]' />
-                        <small className="text-[#F74445] font-medium text-xs">
-                        {touched.password && errors.password}
-                        </small>
-                    </div>
-                    ) : null}
-                </div>
+                <TextInput
+                    label="Password"
+                    name="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={values.password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={errors.password}
+                    warningIcon={warning_icon}
+                />
         
             </div>
             
