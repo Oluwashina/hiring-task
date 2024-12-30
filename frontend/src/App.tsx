@@ -4,6 +4,7 @@ import LoginPage from './pages/Auth/Login';
 import RegisterPage from './pages/Auth/SignUp';
 import Sidebar from './components/Sidebar';
 import HomePage from './pages/Home';
+// import UserRoute from './components/PrivateRoutes/userRoute';
 
 function App() {
   return (
@@ -15,7 +16,9 @@ function App() {
             <Route
               path="/home"
               element={
-                 <Sidebar title="Tasks Home" children={<HomePage />} />       
+                // <UserRoute>
+                  <Sidebar title="Tasks Home" children={<HomePage />} />   
+                //  </UserRoute>    
               }
              />
         </Routes>
