@@ -17,7 +17,7 @@ const Sidebar = ({ title,children }: sidebarType) => {
     const [searchValue, setSearchValue] = useState("");
     const navigate = useNavigate();
 
-    const { signOutUser } = useTodos();
+    const { signOutUser, user } = useTodos();
 
     const [showMenu, setShowMenu] = useState(false); 
 
@@ -209,7 +209,9 @@ const Sidebar = ({ title,children }: sidebarType) => {
                             <div 
                               onClick={() => toggleMenu()}
                             className="cursor-pointer flex justify-center items-center bg-[#ebddca] w-[40px] h-[40px] rounded-full">
-                                <p className='text-base text-[#5b5e61] font-medium'>M</p>
+                                <p className='text-base text-[#5b5e61] font-medium'>
+                                {user ? user.name.charAt(0).toUpperCase() : "A"}
+                                </p>
                             </div>
 
                              {showMenu &&
@@ -219,7 +221,9 @@ const Sidebar = ({ title,children }: sidebarType) => {
                                 
                                 >
                                 <div className='cursor-pointer flex justify-center items-center bg-[#ebddca] w-[25px] h-[25px] rounded-full'>
-                                  <p className='text-xs text-[#5b5e61] font-medium'>M</p>
+                                  <p className='text-xs text-[#5b5e61] font-medium'>
+                                  {user ? user.name.charAt(0).toUpperCase() : "A"}
+                                  </p>
                                 </div>
                                 My Profile
                                 </button>

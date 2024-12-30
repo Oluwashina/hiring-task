@@ -83,14 +83,21 @@ const HomePage = () => {
        updateTodoItem(id, {title: todo.title, description: todo.description, dueDate: todo.dueDate, isCompleted: status})        
     };
 
-    const handleSubmit = (values: Values) => {
-       console.log(values)
+    const handleSubmit = async (values: Values) => {
         // check for what modal mode then call the api action for either add todo or update
         if(modalMode === "add") {
-            addNewTodo({title: values.title, description: values.description, dueDate: values.duedate})
+           const isAdded = await addNewTodo({title: values.title, description: values.description, dueDate: values.duedate})
+           if(isAdded){
+             fetchUserTodos();
+             setTaskOpen(false);
+           }
         }
         else if(modalMode === "edit") {
-          updateTodoItem(currentTask.id, {title: values.title, description: values.description, dueDate: values.duedate, isCompleted: currentTask.isCompleted})
+          const isUpdated = await updateTodoItem(currentTask.id, {title: values.title, description: values.description, dueDate: values.duedate, isCompleted: currentTask.isCompleted})
+          if(isUpdated){
+            fetchUserTodos();
+            setTaskOpen(false);
+          }
         }
 
     };
@@ -101,10 +108,14 @@ const HomePage = () => {
         setCurrentTask(todo);
     }
 
-    const handleDeleteTask = () =>{
+    const handleDeleteTask = async () =>{
         // delete the task from the database with the given id
         console.log(currentTask.id)
-        removeTodoItem(currentTask.id);
+       const isDeleted = await removeTodoItem(currentTask.id);
+       if(isDeleted){
+           fetchUserTodos();
+           setDeleteOpen(false);
+       }
     }
 
 
@@ -134,7 +145,7 @@ const HomePage = () => {
                 initialValues={{
                     title: modalMode === 'edit' && currentTask ? currentTask.title : '',
                     description: modalMode === 'edit' && currentTask ? currentTask.description : '',
-                    duedate: '',
+                    duedate: modalMode === 'edit' && currentTask ? currentTask.dueDate : '',
                 }}
                 validationSchema={createTaskValidator}
                 onSubmit={(
@@ -180,6 +191,7 @@ const HomePage = () => {
                     onBlur={handleBlur}
                     error={errors.duedate}
                     warningIcon={warning_icon}
+                    min={new Date().toISOString().split('T')[0]}
                 />
 
                 {/* Description */}
@@ -276,7 +288,7 @@ const HomePage = () => {
             <div className='border border-gray-200 rounded-lg shadow-sm py-5 px-5 mt-5'>
                 <div className='flex justify-between items-center'>
                     <div>
-                        <h6 className='text-base text-[#0d0d0d] font-medium'>Hi Johnson, you are almost done.</h6>
+                        <h6 className='text-base text-[#0d0d0d] font-medium'>Hi {user ? user.name : 'Anonymous'}, you are almost done.</h6>
                         <p className='text-sm text-[#5b5e61] font-medium'>Please complete few steps to setup your account completely.</p>
                     </div>
                     <div>

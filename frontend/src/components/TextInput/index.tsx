@@ -3,6 +3,7 @@ import React from 'react';
 interface TextInputProps {
   label: string;
   name: string;
+  min?: string;
   type?: string;
   placeholder?: string;
   value: string;
@@ -15,6 +16,7 @@ interface TextInputProps {
 const TextInput: React.FC<TextInputProps> = ({
   label,
   name,
+  min,
   type = 'text',
   placeholder,
   value,
@@ -33,6 +35,7 @@ const TextInput: React.FC<TextInputProps> = ({
           type={type}
           name={name}
           id={name}
+          min={min}
           value={value}
           onChange={onChange}
           onBlur={onBlur}

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import google_icon from '../../assets/google.png'
 import facebook_icon from '../../assets/Facebook.png'
 import warning_icon from '../../assets/warning.svg'
@@ -11,7 +11,7 @@ import { useTodos } from "../../context/TodoContext";
 
 const RegisterPage = () => {
 
-    const { signUpUser, user, loading } = useTodos();
+    const { signUpUser, loading } = useTodos();
     
     interface Values {
         username: string;
@@ -22,15 +22,13 @@ const RegisterPage = () => {
 
     const navigate = useNavigate()
 
-    const handleSubmit = (values: Values) => {
-       signUpUser(values.username, values.email, values.password);
+    const handleSubmit = async (values: Values) => {
+       const isSuccess = await signUpUser(values.username, values.email, values.password);
+       if(isSuccess){
+         navigate('/home')
+       }
     };
 
-    useEffect(()=>{
-      if(user){
-        navigate('/home')
-      }
-    },[user, navigate])
 
   return (
     <div className="min-h-screen flex flex-col">
