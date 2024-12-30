@@ -16,8 +16,6 @@ hiring-task/
   - [Backend Setup](#backend-setup)
   - [Frontend Setup](#frontend-setup)
 - [Scripts](#scripts)
-- [Contributing](#contributing)
-- [License](#license)
 
 ---
 
@@ -41,7 +39,7 @@ The `frontend` folder contains the client-side React application. It is responsi
 
 ### Frontend
 - **React.js**
-- **CSS Framework** (e.g., Tailwind, Bootstrap)
+- **CSS Framework** (TailwindCss)
 
 ---
 
@@ -51,7 +49,7 @@ The `frontend` folder contains the client-side React application. It is responsi
 Ensure you have the following installed:
 - Node.js (>= 16.x)
 - npm (>= 8.x) or yarn
-- MongoDB (if used in the backend)
+- MySQL (if used in the backend)
 
 ---
 
@@ -71,8 +69,15 @@ Ensure you have the following installed:
    - Create a `.env` file in the `backend` directory.
    - Add the following variables:
      ```
-     PORT=5000
-     DATABASE_URL=<your_database_url>
+     DB_TYPE = "mysql"
+     DB_HOST = "localhost"
+     DB_USERNAME = "root"
+     DB_PASSWORD = 
+     DB_PORT = 3306
+     DB_NAME = "todo_list"
+     PORT = 8000
+     SECRET_KEY = "todo_list"
+     EXPIRE_TIME = 3600
      ```
 
 4. Start the server:
@@ -80,7 +85,7 @@ Ensure you have the following installed:
    npm start
    ```
 
-5. The backend server should now run at `http://localhost:5000`.
+5. The backend server should now run at `http://localhost:8000`.
 
 ---
 
