@@ -42,6 +42,10 @@ const HomePage = () => {
         }
     };
 
+     // Calculate the number of completed tasks and pending tasks
+   const completedTasksCount = todos.filter((todo) => todo.isCompleted).length;
+   const pendingTasksCount = todos.filter((todo) => !todo.isCompleted).length;
+
     const openTaskModal = (mode: 'add' | 'edit', task: Todo | null = null) => {
         setModalMode(mode);
         setTaskOpen(true);
@@ -63,11 +67,25 @@ const HomePage = () => {
 
     const [activeTab, setActiveTab] = useState("upcoming"); // Default active tab
 
+   
     const tabs = [
-      { id: "upcoming", label: "4 Upcoming" },
-      { id: "overdue", label: "2 Overdue" },
-      { id: "completed", label: "10 Completed" },
-    ];
+        { id: "upcoming", label: `${todos.filter(todo => moment(todo.dueDate).isAfter(moment())).length} Upcoming` },
+        { id: "overdue", label: `${todos.filter(todo => moment(todo.dueDate).isBefore(moment())).length} Overdue` },
+        { id: "completed", label: `${todos.filter(todo => todo.isCompleted).length} Completed` },
+      ]
+
+      const filteredTodos = () => {
+        switch (activeTab) {
+          case "upcoming":
+            return todos.filter((todo) => moment(todo.dueDate).isAfter(moment()));
+          case "overdue":
+            return todos.filter((todo) => moment(todo.dueDate).isBefore(moment()));
+          case "completed":
+            return todos.filter((todo) => todo.isCompleted);
+          default:
+            return todos;
+        }
+      };
 
     interface Values {
         title: string;
@@ -75,12 +93,12 @@ const HomePage = () => {
         duedate: string;
     }
 
-    const handleCheckboxChange = (id: string, status: boolean, todo: Todo) => {
+    const handleCheckboxChange = async (id: string, status: boolean, todo: Todo) => {
         // Toggle the completed status of the task with the given id
        console.log(id)
        console.log(status)
        // Update the task in the database with the new completed status
-       updateTodoItem(id, {title: todo.title, description: todo.description, dueDate: todo.dueDate, isCompleted: status})        
+       await updateTodoItem(id, {title: todo.title, description: todo.description, dueDate: todo.dueDate, isCompleted: status})        
     };
 
     const handleSubmit = async (values: Values) => {
@@ -327,7 +345,7 @@ const HomePage = () => {
                         </div>
                         <div>
                              <h5 className='text-sm text-[#6b6d70] '>Completed Tasks</h5>
-                            <p className='text-lg font-semibold text-[#000000]'>10</p>
+                            <p className='text-lg font-semibold text-[#000000]'>{completedTasksCount}</p>
                         </div>
                     </div>
 
@@ -351,7 +369,7 @@ const HomePage = () => {
                         </div>
                         <div>
                             <h5 className='text-sm text-[#6b6d70]'>Pending Tasks</h5>
-                            <p className='text-lg font-semibold text-[#000000]'>2</p>
+                            <p className='text-lg font-semibold text-[#000000]'>{pendingTasksCount}</p>
                         </div>
                     </div>
 
@@ -413,7 +431,7 @@ const HomePage = () => {
                         (
                             <>
                             {
-                                todos.length === 0 ?
+                                filteredTodos().length === 0 ?
                                 <div className='flex flex-col justify-center items-center min-h-[400px]'>
                                     <div className='bg-[#F7F7F7] w-[120px] h-[120px] rounded-full'>
         
@@ -428,7 +446,7 @@ const HomePage = () => {
                                 :
                                 (
                                  <>
-                                 {todos.map((todo) => (
+                                 {filteredTodos().map((todo) => (
                                     <div key={todo.id} className='flex justify-between mt-5'>
                                         <div className='flex gap-3'>
                                             <div>
@@ -450,7 +468,7 @@ const HomePage = () => {
                                                 <Event
                                                         style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
                                                     />
-                                                    <p className='text-sm text-[#6b6d70]'> {moment().format("DD MMM, YYYY")} - {moment().format('h:mmA')}</p>
+                                                    <p className='text-sm text-[#6b6d70]'> {moment(todo.dueDate).format("DD MMM, YYYY")} - {moment().format('h:mmA')}</p>
                                                 </div>
                                                 <div className='flex gap-1 items-center'>
                                                         <SellOutlined
@@ -498,12 +516,6 @@ const HomePage = () => {
                              </>
                             )
                         }
-
-                            
-                 
-
-                  
-
 
                 </div>
                 <div className='border border-gray-200 rounded-lg shadow-sm py-5 px-5 h-fit'>
