@@ -1,13 +1,16 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { signIn, fetchTodos, addTodo, updateTodo, deleteTodo, signUp } from '../services/api';
+import toast from "react-hot-toast";
 
 // Types Definition for state
 interface Todo {
   id: string;
   title: string;
   description: string;
-  completed: boolean;
+  isCompleted: boolean;
   dueDate: string;
+  createdAt: string;
+  updatedAt: string
 }
 
 interface User {
@@ -19,13 +22,14 @@ interface TodoContextType {
   todos: Todo[];
   user: User | null;
   loading: boolean;
+  loader: boolean;
   error: string | null;
   signInUser: (email: string, password: string) => void;
   signUpUser: (username: string, email: string, password: string) => void;
   signOutUser: () => void;
   fetchUserTodos: () => void;
-  addNewTodo: (todo: { title: string; description: string }) => void;
-  updateTodoItem: (todoId: string, updatedTodo: { title: string; description: string }) => void;
+  addNewTodo: (todo: { title: string; description: string, dueDate: string }) => void;
+  updateTodoItem: (todoId: string, updatedTodo: { title: string; description: string, dueDate: string, isCompleted: boolean }) => void;
   removeTodoItem: (todoId: string) => void;
 }
 
@@ -45,17 +49,26 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [todos, setTodos] = useState<Todo[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loader, setLoader] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const signInUser = async (email: string, password: string) => {
     setLoading(true);
     try {
       const userData = await signIn(email, password);
-      setUser(userData);
+      setUser(userData.user);
       setLoading(false);
-    } catch (error) {
-      setError('Failed to sign in');
-      setLoading(false);
+    } catch (error: any) {
+       setLoading(false);
+       if (error.response.status === 400 || error.response.status === 404) {
+        setError('Failed to sign in');
+        toast.error("Oops, Looks like either the username/password is not valid!", {
+          style: {
+            fontSize: 14,
+            fontFamily: "Inter",
+          },
+        });
+       }
     }
   };
 
@@ -63,11 +76,19 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLoading(true);
     try {
       const userData = await signUp(username,email, password);
-      setUser(userData);
+      setUser(userData.user);
       setLoading(false);
-    } catch (error) {
-      setError('Failed to sign up');
+    } catch (error: any) {      
       setLoading(false);
+      if (error.response.status === 400 || error.response.status === 404) {
+        setError('Failed to sign in');
+        toast.error("Oops, Looks like this account already exist", {
+          style: {
+            fontSize: 14,
+            fontFamily: "Inter",
+          },
+        });
+       }
     }
   };
 
@@ -96,26 +117,42 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-const addNewTodo = async (todo: { title: string; description: string }) => {
+const addNewTodo = async (todo: { title: string; description: string, dueDate: string }) => {
     if (user) {
-      setLoading(true);
+      setLoader(true);
       try {
         const newTodo = await addTodo(todo);
-        setTodos([...todos, newTodo]);
-        setLoading(false);
+        setTodos([...todos, {
+          id: newTodo.id,
+          title: newTodo.title,
+          description: newTodo.description,
+          isCompleted: false,
+          dueDate: newTodo.dueDate,
+          createdAt: newTodo.createdAt,
+          updatedAt: newTodo.updatedAt,
+        }]);
+        setLoader(false);
       } catch (error) {
         setError('Failed to add todo');
-        setLoading(false);
+        setLoader(false);
       }
     }
   };
 
-const updateTodoItem = async (todoId: string, updatedTodo: { title: string; description: string }) => {
+const updateTodoItem = async (todoId: string, updatedTodo: { title: string; description: string, dueDate: string,isCompleted: boolean }) => {
     if (user) {
       setLoading(true);
       try {
         const updated = await updateTodo(todoId, updatedTodo);
-        setTodos(todos.map(todo => (todo.id === todoId ? updated : todo)));
+        setTodos(todos.map(todo => (todo.id === todoId ? {
+          id: todo.id,
+          title: updated.title || todo.title,
+          description: updated.description || todo.description,
+          dueDate: updated.dueDate || todo.dueDate,
+          isCompleted: updated.isCompleted || todo.isCompleted,
+          createdAt: updated.createdAt,
+          updatedAt: updated.updatedAt,
+        } : todo)));
         setLoading(false);
       } catch (error) {
         setError('Failed to update todo');
@@ -128,14 +165,14 @@ const updateTodoItem = async (todoId: string, updatedTodo: { title: string; desc
 
   const removeTodoItem = async (todoId: string) => {
     if (user) {
-      setLoading(true);
+      setLoader(true);
       try {
         await deleteTodo(todoId);
         setTodos(todos.filter(todo => todo.id !== todoId));
-        setLoading(false);
+        setLoader(false);
       } catch (error) {
         setError('Failed to delete todo');
-        setLoading(false);
+        setLoader(false);
       }
     }
   };
@@ -146,6 +183,7 @@ const updateTodoItem = async (todoId: string, updatedTodo: { title: string; desc
         todos,
         user,
         loading,
+        loader,
         error,
         signInUser,
         signUpUser,

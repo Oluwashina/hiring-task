@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { TodoProvider } from './context/TodoContext';
+import { Toaster } from "react-hot-toast";
 
 
 const root = ReactDOM.createRoot(
@@ -13,6 +14,7 @@ root.render(
   <React.StrictMode>
       <TodoProvider>
          <App />
+         <Toaster />
     </TodoProvider>
   </React.StrictMode>
 );

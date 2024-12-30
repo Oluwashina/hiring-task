@@ -28,27 +28,44 @@ export const fetchTodos = async () => {
       throw new Error('No token found');
     }
   
-    const response = await API.get(`/todos`, {
+    const response = await API.get(`/todo`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `${token}`,
       },
     });
     return response.data;
   };
 
-export const addTodo = async (todo: { title: string, description: string }) => {
+export const addTodo = async (todo: { title: string, description: string, dueDate: string }) => {
   const response = await API.post(`/todo`, todo);
   return response.data;
 };
 
-export const updateTodo = async (todoId: string, updatedTodo: { title: string, description: string }) => {
-  const response = await API.put(`/todo/${todoId}`, updatedTodo);
+export const updateTodo = async (todoId: string, updatedTodo: { title: string, description: string, dueDate: string, isCompleted: boolean }) => {
+ const token = localStorage.getItem('auth_token'); // Retrieve token from localStorage
+  const response = await API.put(`/todo/${todoId}`,
+    updatedTodo,
+     {
+        headers: {
+          Authorization: `${token}`,
+      },
+     }
+    );
+//  return response.data;
+//   const response = await API.put(`/todo/${todoId}`, updatedTodo);
   return response.data;
 };
 
 
 
 export const deleteTodo = async (todoId: string) => {
-  const response = await API.delete(`/todo/${todoId}`);
+  const token = localStorage.getItem('auth_token'); // Retrieve token from localStorage
+  const response = await API.delete(`/todo/${todoId}`,
+     {
+        headers: {
+          Authorization: `${token}`,
+      },
+     }
+    );
   return response.data;
 };

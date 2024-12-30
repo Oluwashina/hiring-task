@@ -18,7 +18,8 @@ const HomePage = () => {
         id: string;
         title: string;
         description: string;
-        completed: boolean;
+        isCompleted: boolean;
+        dueDate: string;
       }
 
     const [showMenuId, setShowMenuId] = useState<string | null>(null); 
@@ -26,10 +27,11 @@ const HomePage = () => {
     const [currentTask, setCurrentTask] = useState<Todo>({
         id: '',
         title: '',
+        dueDate: '',
         description: '',
-        completed: false,
+        isCompleted: false,
     });
-    const { user,fetchUserTodos, todos, loading } = useTodos();
+    const { user,fetchUserTodos, todos, loading, loader, removeTodoItem, addNewTodo, updateTodoItem } = useTodos();
 
 
      const toggleMenu = (taskId: string) => {
@@ -50,8 +52,9 @@ const HomePage = () => {
             setCurrentTask({
                 id: '',
                 title: '',
+                dueDate: '',
                 description: '',
-                completed: false,
+                isCompleted: false,
             }); // Clears current task for add mode
         }
     };
@@ -63,7 +66,7 @@ const HomePage = () => {
     const tabs = [
       { id: "upcoming", label: "4 Upcoming" },
       { id: "overdue", label: "2 Overdue" },
-      { id: "completed", label: "0 Completed" },
+      { id: "completed", label: "10 Completed" },
     ];
 
     interface Values {
@@ -77,18 +80,31 @@ const HomePage = () => {
        console.log(id)
        console.log(status)
        // Update the task in the database with the new completed status
-            
+       updateTodoItem(id, {title: todo.title, description: todo.description, dueDate: todo.dueDate, isCompleted: status})        
     };
 
     const handleSubmit = (values: Values) => {
-        // e.preventDefault()
        console.log(values)
+        // check for what modal mode then call the api action for either add todo or update
+        if(modalMode === "add") {
+            addNewTodo({title: values.title, description: values.description, dueDate: values.duedate})
+        }
+        else if(modalMode === "edit") {
+          updateTodoItem(currentTask.id, {title: values.title, description: values.description, dueDate: values.duedate, isCompleted: currentTask.isCompleted})
+        }
+
     };
 
-    const handleDeleteModal = (id:string) =>{
+    const handleDeleteModal = (todo:Todo) =>{
         setDeleteOpen(!deleteOpen)
         setShowMenuId(null); 
-        console.log(id)
+        setCurrentTask(todo);
+    }
+
+    const handleDeleteTask = () =>{
+        // delete the task from the database with the given id
+        console.log(currentTask.id)
+        removeTodoItem(currentTask.id);
     }
 
 
@@ -203,7 +219,7 @@ const HomePage = () => {
             {/* Login Button */}
             <button
                 type="submit"
-                disabled={!(isValid && dirty)}
+                disabled={!(isValid && dirty) || loader}
                 className="mt-6 w-full disabled:bg-opacity-[0.6] bg-purple-600 text-sm text-white py-4 px-4 rounded-lg hover:bg-opacity-[0.9]"
             >
              {modalMode === 'add' ? 'Create' : 'Save Changes'}
@@ -243,11 +259,9 @@ const HomePage = () => {
                 </button>
                 <button
                 type="button"
+                disabled={loader}
                 className="disabled:bg-opacity-[0.6] bg-purple-600 text-sm text-white py-3 px-3 rounded-lg hover:bg-opacity-[0.9]"
-                onClick={() => {    
-                    setDeleteOpen(false);
-                
-                }}
+                onClick={() => handleDeleteTask()}
                 >
                     Yes, proceed
              </button>
@@ -289,7 +303,7 @@ const HomePage = () => {
                         </div>
                         <div>
                             <h5 className='text-sm text-[#6b6d70] '>Total Tasks</h5>
-                            <p className='text-lg font-semibold text-[#000000]'>10.2K</p>
+                            <p className='text-lg font-semibold text-[#000000]'>{todos.length}</p>
                         </div>
                     </div>
 
@@ -301,7 +315,7 @@ const HomePage = () => {
                         </div>
                         <div>
                              <h5 className='text-sm text-[#6b6d70] '>Completed Tasks</h5>
-                            <p className='text-lg font-semibold text-[#000000]'>3.5K</p>
+                            <p className='text-lg font-semibold text-[#000000]'>10</p>
                         </div>
                     </div>
 
@@ -313,7 +327,7 @@ const HomePage = () => {
                         </div>
                         <div>
                             <h5 className='text-sm text-[#6b6d70] '>All Boards</h5>
-                            <p className='text-lg font-semibold text-[#000000]'>350</p>
+                            <p className='text-lg font-semibold text-[#000000]'>50</p>
                         </div>
                     </div>
 
@@ -325,7 +339,7 @@ const HomePage = () => {
                         </div>
                         <div>
                             <h5 className='text-sm text-[#6b6d70]'>Pending Tasks</h5>
-                            <p className='text-lg font-semibold text-[#000000]'>23</p>
+                            <p className='text-lg font-semibold text-[#000000]'>2</p>
                         </div>
                     </div>
 
@@ -410,7 +424,7 @@ const HomePage = () => {
                                                 id={`completed-${todo.id}`} 
                                                 name="completed"
                                                 type="checkbox"
-                                                checked={todo.completed}
+                                                checked={todo.isCompleted}
                                                 onChange={(e) =>
                                                     handleCheckboxChange(todo.id, e.target.checked, todo)
                                                 }
@@ -454,7 +468,7 @@ const HomePage = () => {
                                                         </button>
                                                         <button
                                                         className="flex gap-2 items-center px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
-                                                        onClick={() => handleDeleteModal(todo.id)}
+                                                        onClick={() => handleDeleteModal(todo)}
                                                         >
                                                                 <DeleteOutline
                                                                 style={{ color: "#5b5e61", fontSize: "20px", }}

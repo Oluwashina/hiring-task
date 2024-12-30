@@ -1,25 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import google_icon from '../../assets/google.png'
 import facebook_icon from '../../assets/Facebook.png'
 import warning_icon from '../../assets/warning.svg'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Formik, Form, FormikHelpers } from "formik";
 import { loginValidator } from "../../validationSchema/validator";
 import TextInput from "../../components/TextInput";
+import { useTodos } from "../../context/TodoContext";
 
 const LoginPage = () => {
    
+  const { signInUser, user, loading } = useTodos();
+
     interface Values {
         email: string;
         password: string;
     }
 
+    const navigate = useNavigate()
+
     const handleSubmit = (values: Values) => {
-        // e.preventDefault()
-       console.log(values)
-       
+       signInUser(values.email, values.password);  
     };
+
+    useEffect(()=>{
+      if(user){
+        navigate('/home')
+      }
+    },[user, navigate])
 
   return (
     <div className="min-h-screen flex flex-col ">
@@ -133,7 +142,7 @@ const LoginPage = () => {
             {/* Login Button */}
             <button
                 type="submit"
-                disabled={!(isValid && dirty)}
+                disabled={!(isValid && dirty) || loading}
                 className="mt-6 w-full disabled:bg-opacity-[0.6] bg-purple-600 text-sm text-white py-4 px-4 rounded-lg hover:bg-opacity-[0.9]"
             >
                 Login 

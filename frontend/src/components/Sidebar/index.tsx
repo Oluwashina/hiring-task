@@ -1,8 +1,10 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import notification_icon from '../../assets/notification.svg'
-import { Add, Home,InsertChartOutlined, PeopleOutline, ContentPaste, ChatBubbleOutline, EventNoteOutlined, DashboardOutlined } from "@mui/icons-material";
+import { Add, Home,InsertChartOutlined, PeopleOutline, ContentPaste, ChatBubbleOutline, EventNoteOutlined, DashboardOutlined, HelpOutline, PersonAddOutlined, LogoutOutlined } from "@mui/icons-material";
 import SearchComponent from '../Search';
 import { useCallback, useState } from 'react';
+import { useTodos } from '../../context/TodoContext';
+import { useNavigate } from 'react-router-dom';
 
 type sidebarType = {
     title: string;
@@ -13,13 +15,31 @@ const Sidebar = ({ title,children }: sidebarType) => {
 
     let location = useLocation();
     const [searchValue, setSearchValue] = useState("");
+    const navigate = useNavigate();
+
+    const { signOutUser } = useTodos();
+
+    const [showMenu, setShowMenu] = useState(false); 
+
+    const toggleMenu = () => {
+        setShowMenu(!showMenu);
+    };
+
 
     const handleSearch = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
           setSearchValue(e.target.value);
         },
         []
-      );
+    );
+
+    const handleLogout = () =>{
+        // Log out user and redirect to login page
+        signOutUser()
+        setTimeout(()=>{
+            navigate("/")
+        }, 1000);
+    }
 
 
     return ( 
@@ -185,9 +205,56 @@ const Sidebar = ({ title,children }: sidebarType) => {
                         <div className="cursor-pointer flex justify-center items-center bg-[#F5F5F5] w-[40px] h-[40px] rounded-full">
                             <img src={notification_icon} alt="bell" />
                         </div>
-                        <div className="cursor-pointer flex justify-center items-center bg-[#ebddca] w-[40px] h-[40px] rounded-full">
-                            <p className='text-base text-[#5b5e61] font-medium'>M</p>
+                        <div className='relative'>
+                            <div 
+                              onClick={() => toggleMenu()}
+                            className="cursor-pointer flex justify-center items-center bg-[#ebddca] w-[40px] h-[40px] rounded-full">
+                                <p className='text-base text-[#5b5e61] font-medium'>M</p>
+                            </div>
+
+                             {showMenu &&
+                              <div className="absolute right-0 top-12 bg-white min-w-[200px] border border-gray-200 shadow-md rounded-md py-2 w-40 z-10">
+                                <button
+                                className="flex gap-3 items-center px-3 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
+                                
+                                >
+                                <div className='cursor-pointer flex justify-center items-center bg-[#ebddca] w-[25px] h-[25px] rounded-full'>
+                                  <p className='text-xs text-[#5b5e61] font-medium'>M</p>
+                                </div>
+                                My Profile
+                                </button>
+                                <button
+                                className="flex gap-3 items-center px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
+                              
+                                >
+                                        <HelpOutline
+                                        style={{ color: "#5b5e61", fontSize: "20px", }}
+                                        />
+                                Help and support
+                                </button>
+                                <button
+                                className="flex gap-3 items-center px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
+                              
+                                >
+                                        <PersonAddOutlined
+                                        style={{ color: "#5b5e61", fontSize: "20px", }}
+                                        />
+                                Invite friends
+                                </button>
+                                <button
+                                onClick={(handleLogout)}
+                                className="flex gap-3 items-center px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
+                              
+                                >
+                                        <LogoutOutlined
+                                        style={{ color: "#5b5e61", fontSize: "20px", }}
+                                        />
+                                Logout
+                                </button>
+                             </div>
+                             }
                         </div>
+                       
                         
                     </div>
                 </div>
