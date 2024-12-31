@@ -65,25 +65,33 @@ const HomePage = () => {
 
 
 
-    const [activeTab, setActiveTab] = useState("upcoming"); // Default active tab
+    const [activeTab, setActiveTab] = useState("all"); // Default active tab
 
    
     const tabs = [
-        { id: "upcoming", label: `${todos.filter(todo => moment(todo.dueDate).isAfter(moment())).length} Upcoming` },
-        { id: "overdue", label: `${todos.filter(todo => moment(todo.dueDate).isBefore(moment())).length} Overdue` },
-        { id: "completed", label: `${todos.filter(todo => todo.isCompleted).length} Completed` },
+        { id: "all", label: `All (${todos.length})` },
+        { id: "upcoming", label: `Upcoming (${todos.filter(todo => moment(todo.dueDate).isAfter(moment())).length})` },
+        { 
+            id: "overdue", 
+            label: `Overdue (${todos.filter(todo => 
+                moment(todo.dueDate).isBefore(moment()) && !todo.isCompleted
+              ).length})` 
+          },
+        { id: "completed", label: `Completed (${todos.filter(todo => todo.isCompleted).length})` },
       ]
 
       const filteredTodos = () => {
         switch (activeTab) {
-          case "upcoming":
-            return todos.filter((todo) => moment(todo.dueDate).isAfter(moment()));
-          case "overdue":
-            return todos.filter((todo) => moment(todo.dueDate).isBefore(moment()));
-          case "completed":
-            return todos.filter((todo) => todo.isCompleted);
+          case 'upcoming':
+            return todos.filter(todo => moment(todo.dueDate).isAfter(moment()));
+          case 'overdue':
+            return todos.filter(todo => 
+              moment(todo.dueDate).isBefore(moment()) && !todo.isCompleted
+            );
+          case 'completed':
+            return todos.filter(todo => todo.isCompleted);
           default:
-            return todos;
+            return todos; // 'All' tab shows all todos
         }
       };
 
@@ -98,7 +106,10 @@ const HomePage = () => {
        console.log(id)
        console.log(status)
        // Update the task in the database with the new completed status
-       await updateTodoItem(id, {title: todo.title, description: todo.description, dueDate: todo.dueDate, isCompleted: status})        
+       const isUpdated = await updateTodoItem(id, {title: todo.title, description: todo.description, dueDate: todo.dueDate, isCompleted: status})  
+        if(isUpdated){
+            fetchUserTodos();
+        }      
     };
 
     const handleSubmit = async (values: Values) => {
@@ -138,11 +149,8 @@ const HomePage = () => {
 
 
     useEffect(()=>{
-        if(user){
-          fetchUserTodos();
-        }
-     
-    },[user, fetchUserTodos])
+        fetchUserTodos();
+    },[])
 
 
     return ( 
@@ -159,8 +167,8 @@ const HomePage = () => {
       >
         <div className='py-5'>
         <Formik
-                enableReinitialize={true} 
-                initialValues={{
+             enableReinitialize={true}
+                  initialValues={{
                     title: modalMode === 'edit' && currentTask ? currentTask.title : '',
                     description: modalMode === 'edit' && currentTask ? currentTask.description : '',
                     duedate: modalMode === 'edit' && currentTask ? currentTask.dueDate : '',
@@ -304,15 +312,15 @@ const HomePage = () => {
 
         {/* Overview section i.e verification section/metrics */}
             <div className='border border-gray-200 rounded-lg shadow-sm py-5 px-5 mt-5'>
-                <div className='flex justify-between items-center'>
+                <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
                     <div>
-                        <h6 className='text-base text-[#0d0d0d] font-medium'>Hi {user ? user.name : 'Anonymous'}, you are almost done.</h6>
+                        <h6 className='text-base text-[#0d0d0d] font-medium'>Hi <span className='capitalize'>{user ? user.name : 'Anonymous'}</span>, you are almost done.</h6>
                         <p className='text-sm text-[#5b5e61] font-medium'>Please complete few steps to setup your account completely.</p>
                     </div>
-                    <div>
+                    <div className='mt-3 md:mt-0'>
                     <button
                             type="submit"
-                            className="w-full flex gap-1 items-center disabled:bg-opacity-[0.6] font-medium bg-[#ede8fc] text-sm text-[#6f46eb] py-3 px-3 rounded-lg hover:bg-opacity-[0.9]"
+                            className=" flex gap-1 items-center disabled:bg-opacity-[0.6] font-medium bg-[#ede8fc] text-sm text-[#6f46eb] py-3 px-3 rounded-lg hover:bg-opacity-[0.9]"
                         >
                             Setup Account 
                             <ChevronRight
@@ -324,7 +332,7 @@ const HomePage = () => {
 
                 <div className='mt-5 bg-gray-200 w-full h-[1px]'></div>
                 
-                <div className='grid grid-cols-4 gap-3 mt-5'>
+                <div className='grid grid-cols-2 md:grid-cols-4 gap-3 mt-5'>
                     <div className='flex gap-3 items-center'>
                         <div className='rounded-full w-[45px] h-[45px] border border-[#845df0] flex justify-center items-center bg-[#ede8fc]'>
                         <EventNoteOutlined
@@ -378,7 +386,7 @@ const HomePage = () => {
             </div>
 
             {/* Tasks/ Annoucements section */}
-            <div className='mt-5 grid grid-cols-2 gap-4'>
+            <div className='mt-5 grid md:grid-cols-2 gap-4'>
                 <div className='border border-gray-200 rounded-lg shadow-sm py-5 px-5 h-fit'>
                     <div className='flex justify-between items-center'>
                         <div>
@@ -399,7 +407,7 @@ const HomePage = () => {
                         </div>
                     </div>
 
-                    <div className='mt-5 flex gap-2 items-center'>
+                    <div className='mt-5  flex flex-wrap gap-2 items-center'>
                           {tabs.map((tab) => (
                             <button
                             key={tab.id}

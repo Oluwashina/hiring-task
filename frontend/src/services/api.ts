@@ -33,11 +33,20 @@ export const fetchTodos = async () => {
         Authorization: `${token}`,
       },
     });
+    console.log(response.data)
     return response.data;
   };
 
 export const addTodo = async (todo: { title: string, description: string, dueDate: string }) => {
-  const response = await API.post(`/todo`, todo);
+  const token = localStorage.getItem('auth_token'); // Retrieve token from localStorage
+  const response = await API.post(`/todo`, todo,
+    {
+      headers: {
+        Authorization: `${token}`,
+    },
+   }
+  );
+  console.log(response.data)
   return response.data;
 };
 
@@ -51,8 +60,7 @@ export const updateTodo = async (todoId: string, updatedTodo: { title: string, d
       },
      }
     );
-//  return response.data;
-//   const response = await API.put(`/todo/${todoId}`, updatedTodo);
+    console.log(response.data)
   return response.data;
 };
 

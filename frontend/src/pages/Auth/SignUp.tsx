@@ -25,13 +25,13 @@ const RegisterPage = () => {
     const handleSubmit = async (values: Values) => {
        const isSuccess = await signUpUser(values.username, values.email, values.password);
        if(isSuccess){
-         navigate('/home')
+         navigate('/')
        }
     };
 
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col px-4 md:px-0">
 
           {/* Header Section */}
           <Header />

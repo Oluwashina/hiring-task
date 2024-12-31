@@ -80,6 +80,15 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const userData = await signUp(username,email, password);
       setUser(userData.user);
       setLoading(false);
+      toast.success("User created successful, Please proceed to login!", {
+        style: {
+          border: "1px solid #2B8C34",
+          backgroundColor: "#2B8C34",
+          color: "#FFFFFF",
+          fontSize: 14,
+        },
+        position: "bottom-right",
+      });
       return true; 
     } catch (error: any) {      
       setLoading(false);
@@ -160,6 +169,7 @@ const updateTodoItem = async (todoId: string, updatedTodo: { title: string; desc
       setLoader(true);
       try {
         const updated = await updateTodo(todoId, updatedTodo);
+        console.log(updated)
         setTodos(todos.map(todo => (todo.id === todoId ? {
           id: todo.id,
           title: updated.title || todo.title,

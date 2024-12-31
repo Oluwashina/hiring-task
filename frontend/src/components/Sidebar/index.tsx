@@ -36,16 +36,14 @@ const Sidebar = ({ title,children }: sidebarType) => {
     const handleLogout = () =>{
         // Log out user and redirect to login page
         signOutUser()
-        setTimeout(()=>{
-            navigate("/")
-        }, 1000);
+        navigate("/");
     }
 
 
     return ( 
         <>
-      <div className="hidden lg:flex h-full min-h-screen">
-            <div className="md:w-64 flex flex-col justify-between min-h-screen border-r border-[#ededed] bg-[#fafafa] py-6 flex-shrink-0">
+      <div className=" lg:flex h-full min-h-screen">
+            <div className="md:w-64 hidden lg:flex flex-col justify-between min-h-screen border-r border-[#ededed] bg-[#fafafa] py-6 flex-shrink-0">
                 <div>
                     {/* <div className='px-5'>
                         <img src={logo} alt="logo" />
@@ -189,7 +187,7 @@ const Sidebar = ({ title,children }: sidebarType) => {
                         </p>
                     </div>
 
-                    <div  className='min-w-[350px]'>
+                    <div  className='hidden md:block min-w-[350px]'>
                       <SearchComponent
                             placeholder="Search..."
                             handleChange={(e) => handleSearch(e)}

@@ -9,7 +9,7 @@ const registerHandler = async (req, res) => {
   const user = await userService.createUser({
     username,
     email,
-    password: hashPassword,
+    hashPassword,
   });
   res.json({ user }).status(httpStatus.CREATED);
 };

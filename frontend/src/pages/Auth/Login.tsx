@@ -32,7 +32,7 @@ const LoginPage = () => {
 
 
   return (
-    <div className="min-h-screen flex flex-col ">
+    <div className="min-h-screen flex flex-col px-4 md:px-0 ">
 
       {/* Header Section */}
       <Header />
