@@ -34,7 +34,7 @@ The `frontend` folder contains the client-side React application. It is responsi
 ### Backend
 - **Node.js**
 - **Express.js**
-- **SQL** (or any database of your choice)
+- **SQL**
 - **Other libraries/frameworks** (add as applicable)
 
 ### Frontend
@@ -62,7 +62,7 @@ Ensure you have the following installed:
 
 2. Install dependencies:
    ```bash
-   npm install
+   yarn install
    ```
 
 3. Configure environment variables:
@@ -82,10 +82,12 @@ Ensure you have the following installed:
 
 4. Start the server:
    ```bash
-   npm start
+   yarn run dev
    ```
 
 5. The backend server should now run at `http://localhost:8000`.
+
+6. The Postman API Documentation is at `https://documenter.getpostman.com/view/8738176/2sAYJ7fJac`.
 
 ---
 
@@ -98,12 +100,12 @@ Ensure you have the following installed:
 
 2. Install dependencies:
    ```bash
-   npm install
+   yarn install
    ```
 
 3. Start the React development server:
    ```bash
-   npm start
+   yarn start
    ```
 
 4. The frontend app should now be running at `http://localhost:3000`.
@@ -113,8 +115,8 @@ Ensure you have the following installed:
 ## Scripts
 
 ### Backend
-- `npm run dev` - Starts the server in development mode (if applicable).
+- `yarn run dev` - Starts the server in development mode (if applicable).
 
 ### Frontend
-- `npm start` - Starts the React development server.
-- `npm run build` - Builds the production-ready frontend application.
+- `yarn start` - Starts the React development server.
+- `yarn run build` - Builds the production-ready frontend application.

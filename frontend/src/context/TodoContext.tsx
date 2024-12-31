@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState,useCallback, ReactNode } from 'react';
 import { signIn, fetchTodos, addTodo, updateTodo, deleteTodo, signUp } from '../services/api';
 import toast from "react-hot-toast";
 import { Todo, User } from '../types';
@@ -111,7 +111,8 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setTodos([]);
   };
 
-  const fetchUserTodos = async () => {
+
+  const fetchUserTodos = useCallback(async () => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
       setError('No token found');
@@ -120,7 +121,7 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     setLoading(true);
     try {
-      const userTodos = await fetchTodos();
+      const userTodos = await fetchTodos(); 
       setTodos(userTodos);
       setLoading(false);
       console.log(userTodos);
@@ -128,7 +129,7 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setError('Failed to fetch todos');
       setLoading(false);
     }
-  };
+  }, []); 
 
 const addNewTodo = async (todo: { title: string; description: string, dueDate: string }): Promise<boolean> => {
     if (user) {

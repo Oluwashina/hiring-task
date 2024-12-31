@@ -80,6 +80,25 @@ const HomePage = () => {
         { id: "completed", label: `Completed (${todos.filter(todo => todo.isCompleted).length})` },
       ]
 
+      const getTaskStatus = (todo: Todo) => {
+        const currentDate = moment();
+        let status = '';
+        let color = '';
+    
+        if (todo.isCompleted) {
+            status = 'Completed';
+            color = '#30bc53'; // Green for completed
+        } else if (moment(todo.dueDate).isBefore(currentDate) && !todo.isCompleted) {
+            status = 'Overdue';
+            color = '#F74445'; // Red for overdue
+        } else if (moment(todo.dueDate).isAfter(currentDate)) {
+            status = 'Upcoming';
+            color = '#dbd631'; // Yellow for upcoming
+        }
+    
+        return { status, color };
+    };
+
       const filteredTodos = () => {
         switch (activeTab) {
           case 'upcoming':
@@ -102,9 +121,6 @@ const HomePage = () => {
     }
 
     const handleCheckboxChange = async (id: string, status: boolean, todo: Todo) => {
-        // Toggle the completed status of the task with the given id
-       console.log(id)
-       console.log(status)
        // Update the task in the database with the new completed status
        const isUpdated = await updateTodoItem(id, {title: todo.title, description: todo.description, dueDate: todo.dueDate, isCompleted: status})  
         if(isUpdated){
@@ -139,7 +155,6 @@ const HomePage = () => {
 
     const handleDeleteTask = async () =>{
         // delete the task from the database with the given id
-        console.log(currentTask.id)
        const isDeleted = await removeTodoItem(currentTask.id);
        if(isDeleted){
            fetchUserTodos();
@@ -150,7 +165,7 @@ const HomePage = () => {
 
     useEffect(()=>{
         fetchUserTodos();
-    },[])
+    },[fetchUserTodos])
 
 
     return ( 
@@ -340,7 +355,7 @@ const HomePage = () => {
                                 />
                         </div>
                         <div>
-                            <h5 className='text-sm text-[#6b6d70] '>Total Tasks</h5>
+                            <h5 className='text-sm text-[#70706b] '>Total Tasks</h5>
                             <p className='text-lg font-semibold text-[#000000]'>{todos.length}</p>
                         </div>
                     </div>
@@ -454,7 +469,9 @@ const HomePage = () => {
                                 :
                                 (
                                  <>
-                                 {filteredTodos().map((todo) => (
+                                 {filteredTodos().map((todo) => {
+                                       const { status, color } = getTaskStatus(todo); // Calculate status and color once        
+                                    return (
                                     <div key={todo.id} className='flex justify-between mt-5'>
                                         <div className='flex gap-3'>
                                             <div>
@@ -470,19 +487,19 @@ const HomePage = () => {
                                                 />
                                             </div>
                                             <div>
-                                            <h6 className='text-sm font-semibold text-[#000000]'>{todo.title}</h6>
+                                            <h6 className='text-sm font-semibold text-[#000000] max-w-[400px] text-ellipsis overflow-hidden whitespace-nowrap'>{todo.title}</h6>
                                             <div className='flex gap-4 items-center mt-1'>
                                                 <div className='flex gap-1 items-center'>
                                                 <Event
                                                         style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
                                                     />
-                                                    <p className='text-sm text-[#6b6d70]'> {moment(todo.dueDate).format("DD MMM, YYYY")} - {moment().format('h:mmA')}</p>
+                                                    <p className='text-sm text-[#6b6d70]'> {moment(todo.dueDate).format("DD MMM, YYYY")} -  <span className={`text-[${color}]`}>{status}</span></p>
                                                 </div>
                                                 <div className='flex gap-1 items-center'>
                                                         <SellOutlined
                                                         style={{ color: "#5b5e61", fontSize: "16px", cursor: "pointer" }}
                                                     />
-                                                    <p className='text-sm text-[#6b6d70]'>UX</p>
+                                                    <p className='text-sm text-[#6b6d70]'>Developers</p>
                                                 </div>
                                             </div>
                                             </div>   
@@ -517,7 +534,8 @@ const HomePage = () => {
                                                     )}
                                             </div>
                                     </div>
-                                    ))}
+                                    );
+                                    })}
                                  </>
                                 )
                              }
@@ -544,10 +562,10 @@ const HomePage = () => {
 
                             </div>
                             <div className='mt-5'>
-                                <h6 className='text-[#000000] text-lg font-medium'>No tasks has founded</h6>
+                                <h6 className='text-[#000000] text-lg font-medium'>No announcements</h6>
                             </div>
                             <div className='mt-1 max-w-[250px] mx-auto'>
-                                <p className='text-sm text-[#3A3A3A] text-center'>Click here to add <span className='text-[#6f46eb] cursor-pointer'>New task</span></p>
+                                <p className='text-sm text-[#3A3A3A] text-center'>Click here to add  <span className='text-[#6f46eb] cursor-pointer'>New annoucement</span></p>
                             </div>
                      </div>
 
