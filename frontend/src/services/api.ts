@@ -33,7 +33,6 @@ export const fetchTodos = async () => {
         Authorization: `${token}`,
       },
     });
-    console.log(response.data)
     return response.data;
   };
 
@@ -46,7 +45,6 @@ export const addTodo = async (todo: { title: string, description: string, dueDat
     },
    }
   );
-  console.log(response.data)
   return response.data;
 };
 
@@ -60,7 +58,6 @@ export const updateTodo = async (todoId: string, updatedTodo: { title: string, d
       },
      }
     );
-    console.log(response.data)
   return response.data;
 };
 

@@ -25,9 +25,7 @@ const LoginPage = () => {
        if(isSuccess){
          navigate('/home')
        }
-       else{
-        console.log('login failed')
-       }
+      
     };
 
 

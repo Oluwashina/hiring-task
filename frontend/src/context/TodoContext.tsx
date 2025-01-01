@@ -124,7 +124,6 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const userTodos = await fetchTodos(); 
       setTodos(userTodos);
       setLoading(false);
-      console.log(userTodos);
     } catch (error) {
       setError('Failed to fetch todos');
       setLoading(false);
@@ -170,7 +169,6 @@ const updateTodoItem = async (todoId: string, updatedTodo: { title: string; desc
       setLoader(true);
       try {
         const updated = await updateTodo(todoId, updatedTodo);
-        console.log(updated)
         setTodos(todos.map(todo => (todo.id === todoId ? {
           id: todo.id,
           title: updated.title || todo.title,

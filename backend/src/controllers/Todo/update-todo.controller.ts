@@ -9,7 +9,6 @@ interface CustomRequest extends Request {
 }
 
 const updateTodoHandler = async (req: CustomRequest, res: Response) => {
-  console.log("got her")
   const { id } = req.params; 
   const { title, description, dueDate, isCompleted } = req.body;
   const user = req.user; 
@@ -27,7 +26,6 @@ const updateTodoHandler = async (req: CustomRequest, res: Response) => {
      return res.status(400).json({ message: 'Unauthorized: You can only update your own todos.' }); 
    }
 
-   console.log("got", getTodo)
   try {
     const updatedTodo = await todoService.updateTodo({ 
       title: title ? title : undefined, 

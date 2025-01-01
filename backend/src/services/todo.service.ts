@@ -26,7 +26,6 @@ export const createTodo = async (data: { title: string; description?: string; du
 
 export const getTodos = async (user: UserEntity) => {
   try {
-    console.log(user)
     const todoRepository = AppDataSouce.getRepository(TodoEntity);
     const todos = await todoRepository.find({
       where: { user :{ uuid: user.uuid } }, 
@@ -39,7 +38,6 @@ export const getTodos = async (user: UserEntity) => {
 };
 
 export const getOneTodo = async (data) => {
-  console.log(data)
   const todoRepository = AppDataSouce.getRepository(TodoEntity);
   const findTodo = await todoRepository.findOne({ where: { ...data },relations: ['user'],select: { 
     user: { 
@@ -48,7 +46,6 @@ export const getOneTodo = async (data) => {
       email: true 
     } 
   }  });
-  console.log("wetttu", findTodo)
   if (!findTodo) return null;
   return findTodo;
 };
